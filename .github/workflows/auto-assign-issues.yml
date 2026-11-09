@@ -25,44 +25,52 @@ jobs:
       - name: Assign & notify
         run: |
           set -euo pipefail
+
+          # 1) Recolectar TODAS las issues sin asignar antes de mutar nada:
+          #    si se asigna mientras se pagina, las issues salen del filtro
+          #    `no:assignee` y la paginación las saltaría.
+          tmp=$(mktemp)
           page=1
           while :; do
             resp=$(gh api -X GET search/issues \
               -f q="$SEARCH_QUERY" -f per_page=100 -f page="$page")
             [ "$(jq '.items | length' <<<"$resp")" -eq 0 ] && break
-
             jq -c '.items[] | {
                        repo: (.repository_url | sub(".*/repos/";"")),
                        number, title, url: .html_url,
                        author: .user.login,
                        labels: ([.labels[].name] | join(", "))
-                     }' <<<"$resp" |
-            while read -r it; do
-              repo=$(jq -r .repo      <<<"$it")
-              num=$(jq -r .number     <<<"$it")
-              title=$(jq -r .title    <<<"$it")
-              url=$(jq -r .url        <<<"$it")
-              iauthor=$(jq -r .author <<<"$it")
-              labels=$(jq -r .labels  <<<"$it")
-
-              gh api -X POST "repos/$repo/issues/$num/assignees" \
-                -f assignees[]="$ASSIGNEE" >/dev/null
-
-              body=$(jq -n \
-                --arg message "New issue ${repo} #${num}: ${title}" \
-                --arg origin "github" --arg author "$repo" \
-                --arg repo "$repo" --arg url "$url" --argjson number "$num" \
-                --arg issue_author "$iauthor" --arg labels "$labels" \
-                '{message:$message, origin:$origin, author:$author, level:"info",
-                  metadata:{repo:$repo, number:$number, url:$url,
-                            author:$issue_author, labels:$labels}}')
-
-              curl -fsS -X POST "$VALET_URL/api/notifications" \
-                -H "Authorization: Bearer $VALET_TOKEN" \
-                -H "Content-Type: application/json" -d "$body" \
-                || echo "::warning::Valet notification failed for $repo#$num"
-
-              echo "→ $repo #$num"
-            done
+                     }' <<<"$resp" >> "$tmp"
             page=$((page+1))
           done
+
+          echo "issues a procesar: $(wc -l < "$tmp")"
+
+          # 2) Asignar + notificar.
+          while read -r it; do
+            repo=$(jq -r .repo      <<<"$it")
+            num=$(jq -r .number     <<<"$it")
+            title=$(jq -r .title    <<<"$it")
+            url=$(jq -r .url        <<<"$it")
+            iauthor=$(jq -r .author <<<"$it")
+            labels=$(jq -r .labels  <<<"$it")
+
+            gh api -X POST "repos/$repo/issues/$num/assignees" \
+              -f assignees[]="$ASSIGNEE" >/dev/null
+
+            body=$(jq -n \
+              --arg message "New issue ${repo} #${num}: ${title}" \
+              --arg origin "github" --arg author "$repo" \
+              --arg repo "$repo" --arg url "$url" --argjson number "$num" \
+              --arg issue_author "$iauthor" --arg labels "$labels" \
+              '{message:$message, origin:$origin, author:$author, level:"info",
+                metadata:{repo:$repo, number:$number, url:$url,
+                          author:$issue_author, labels:$labels}}')
+
+            curl -fsS -X POST "$VALET_URL/api/notifications" \
+              -H "Authorization: Bearer $VALET_TOKEN" \
+              -H "Content-Type: application/json" -d "$body" \
+              || echo "::warning::Valet notification failed for $repo#$num"
+
+            echo "→ $repo #$num"
+          done < "$tmp"
