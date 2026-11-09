@@ -1,0 +1,27 @@
+name: Keep-alive (evita el corte a 60 días)
+
+on:
+  schedule:
+    # 06:17 UTC del día 1 de cada mes (minuto :17 para esquivar la carga del :00)
+    - cron: "17 6 1 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Empty commit
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "🤖 chore: keep-alive (refresh 60-day activity timer)"
+          git push
