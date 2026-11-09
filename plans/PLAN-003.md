@@ -21,8 +21,8 @@ cron externo (cron-job.org / UptimeRobot / co1)
 
 - [ ] T1. Crear PAT fine-grained (`Actions: Read and write`, solo `atareao/.github`).
 - [ ] T2. Registrar el cron externo (semanal o mensual).
-- [ ] T3. Script de referencia `scripts/keepalive.sh`.
-- [ ] T4. Documentar en `README.md`.
+- [x] T3. Script de referencia `scripts/keepalive.sh`.
+- [x] T4. Documentar en `README.md`.
 
 ## Decisiones
 
