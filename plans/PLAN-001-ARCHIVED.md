@@ -2,7 +2,7 @@
 
 - **Issue:** https://github.com/atareao/.github/issues/1
 - **Repo anfitrión:** `atareao/.github` (público)
-- **Estado:** en curso (2026-11-09)
+- **Estado:** completado (2026-11-09) · archivado
 
 ## Objetivo
 
@@ -29,13 +29,13 @@ Componentes:
 
 ## Tareas
 
-- [ ] T1. Crear repo `atareao/.github` (público). [issue #1]
-- [ ] T2. Workflow `auto-assign-issues.yml` (cron */15 + workflow_dispatch).
-- [ ] T3. Crear ingest key `github-issues` en Valet y guardar el token.
-- [ ] T4. Definir secrets `ISSUES_PAT`, `VALET_URL`, `VALET_INGEST_TOKEN`.
-- [ ] T5. `README.md` con setup, secrets y keep-alive.
-- [ ] T6. Probar con `workflow_dispatch` y verificar asignación + aviso en Valet.
-- [ ] T7. Keep-alive para el corte de 60 días de inactividad.
+- [x] T1. Crear repo `atareao/.github` (público). [issue #1]
+- [x] T2. Workflow `auto-assign-issues.yml` (cron */15 + workflow_dispatch).
+- [x] T3. Crear ingest key `github-issues` en Valet y guardar el token.
+- [x] T4. Definir secrets `ISSUES_PAT`, `VALET_URL`, `VALET_INGEST_TOKEN`.
+- [x] T5. `README.md` con setup, secrets y keep-alive.
+- [x] T6. Probar con `workflow_dispatch` y verificar asignación + aviso en Valet.
+- [x] T7. Keep-alive para el corte de 60 días de inactividad.
 
 ## Decisiones
 
