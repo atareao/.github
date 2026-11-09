@@ -53,11 +53,21 @@ El `token` solo aparece en esa respuesta: guárdalo ya.
 ### Caveats
 
 - **Corte a 60 días:** GitHub desactiva los workflows programados tras 60 días sin
-  actividad del repo. Mitigación: keep-alive (cron externo que llame a `workflow_dispatch`
-  vía API) o un commit periódico.
+  actividad del repo. **Cubierto por `keepalive.yml`** (ver más abajo).
 - **Primera ejecución:** asigna *todas* las issues abiertas sin asignar. Para acotar,
   añade `created:>AAAA-MM-DD` a `SEARCH_QUERY`.
 - **La auto-asignación no notifica:** al hacerla tu propio PAT, GitHub no te avisa; el
   aviso fiable es el de Valet.
 - **Valet debe ser alcanzable** desde los runners de GitHub (el `APP_HOST` tras Traefik
   lo es).
+
+## Keep-alive (corte a 60 días)
+
+GitHub desactiva los workflows programados tras **60 días sin actividad** del repo. Como
+este repo solo tiene config, [`keepalive.yml`](.github/workflows/keepalive.yml) empuja
+**un commit vacío al mes**: así siempre hay actividad dentro de la ventana y ningún cron
+se desactiva. Es auto-sostenible (corre cada 30 días < 60).
+
+**Fallback a prueba de balas:** un cron externo (cron-job.org / UptimeRobot) que dispare
+`POST /repos/atareao/.github/actions/workflows/keepalive.yml/dispatches` con un PAT
+fine-grained con `Actions: write` limitado a este repo.
