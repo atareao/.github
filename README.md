@@ -68,6 +68,24 @@ este repo solo tiene config, [`keepalive.yml`](.github/workflows/keepalive.yml) 
 **un commit vacío al mes**: así siempre hay actividad dentro de la ventana y ningún cron
 se desactiva. Es auto-sostenible (corre cada 30 días < 60).
 
-**Fallback a prueba de balas:** un cron externo (cron-job.org / UptimeRobot) que dispare
-`POST /repos/atareao/.github/actions/workflows/keepalive.yml/dispatches` con un PAT
-fine-grained con `Actions: write` limitado a este repo.
+### Fallback: cron externo
+
+Red de seguridad que no depende del scheduler de GitHub. Un cron externo (cron-job.org,
+UptimeRobot, o un cron en `co1`) dispara el workflow vía API:
+
+1. Crea un PAT **fine-grained** con permiso **Actions: Read and write**, limitado **solo**
+   al repo `atareao/.github`.
+2. Registra el cron (semanal o mensual) que ejecute:
+
+```bash
+curl -fsS -X POST \
+  -H "Authorization: Bearer <PAT>" \
+  -H "Accept: application/vnd.github+json" \
+  https://api.github.com/repos/atareao/.github/actions/workflows/keepalive.yml/dispatches \
+  -d '{"ref":"main"}'
+```
+
+Script listo para usar: [`scripts/keepalive.sh`](scripts/keepalive.sh).
+
+> El PAT solo necesita `Actions: write`; guárdalo en el servicio externo como secreto y
+> rótalo de vez en cuando.
