@@ -16,9 +16,9 @@ jobs:
       GH_TOKEN: ${{ secrets.ISSUES_PAT }}
       OWNER: atareao
       ASSIGNEE: atareao
-      # Arranque acotado a los últimos 30 días (2026-10-10). Quita el filtro
-      # created:> cuando quieras ponerte al día con las issues antiguas.
-      SEARCH_QUERY: "user:atareao is:issue is:open no:assignee created:>2026-10-10"
+      # Sin filtro de fecha: el propio `no:assignee` limita el trabajo a lo
+      # pendiente. (Para un arranque suave, añade `created:>AAAA-MM-DD`.)
+      SEARCH_QUERY: "user:atareao is:issue is:open no:assignee"
       VALET_URL: ${{ secrets.VALET_URL }}
       VALET_TOKEN: ${{ secrets.VALET_INGEST_TOKEN }}
     steps:
