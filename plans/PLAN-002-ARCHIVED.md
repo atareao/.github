@@ -2,7 +2,7 @@
 
 - **Issue:** https://github.com/atareao/.github/issues/2
 - **Plan previo:** PLAN-001
-- **Estado:** en curso (2026-11-09)
+- **Estado:** completado (2026-11-09) · archivado
 
 ## Problema
 
@@ -29,10 +29,10 @@ cron "17 6 1 * *" (mensual)  ──►  keepalive.yml
 
 ## Tareas
 
-- [ ] T1. Workflow `.github/workflows/keepalive.yml` (cron mensual + `workflow_dispatch`).
-- [ ] T2. Permisos `contents: write` y commit vacío con identidad de bot.
-- [ ] T3. Documentar el keep-alive en `README.md`.
-- [ ] T4. Verificar con `workflow_dispatch` que empuja el commit.
+- [x] T1. Workflow `.github/workflows/keepalive.yml` (cron mensual + `workflow_dispatch`).
+- [x] T2. Permisos `contents: write` y commit vacío con identidad de bot.
+- [x] T3. Documentar el keep-alive en `README.md`.
+- [x] T4. Verificar con `workflow_dispatch` que empuja el commit.
 
 ## Alternativa (más a prueba de balas)
 
